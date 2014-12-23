@@ -55,7 +55,7 @@ def game_loop():
 
     thing_startx = random.randrange(0, display_width)
     thing_starty = -600
-    thing_speed = 7
+    thing_speed = 4
     thing_width = 200
     thing_height = 100
 
@@ -108,6 +108,8 @@ def game_loop():
             thing_starty = 0 - thing_height
             thing_startx = random.randrange(0,display_width)
             dodged += 1
+            thing_speed += 0.5
+            thing_width += (dodged * 1.25)
 
         if y < thing_starty+thing_height:
             print('y crossover')
