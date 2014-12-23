@@ -30,17 +30,20 @@ def message_display(text):
     TextRect.center = ((display_width / 2), (display_height / 2))
     gameDisplay.blit(TextSurf, TextRect)
     pygame.display.update()
-    time.sleep(2)
+    time.sleep(1)
     game_loop()
 
 def car(x, y):
     gameDisplay.blit(carImg, (x, y))
 
+accel_step = 0.5
+
 def game_loop():
     x = (display_width * 0.45)
     y = (display_height * 0.6)
 
-    pos_change = [0, 0]
+    accel = [0, 0]
+    speed = [0, 0]
 
     gameExit = False
 
@@ -53,22 +56,25 @@ def game_loop():
 
             if etype == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    pos_change[0] = -5
+                    accel[0] -= accel_step
                 elif event.key == pygame.K_RIGHT:
-                    pos_change[0] = 5
-                elif event.key == pygame.K_UP:
-                    pos_change[1] = -5
+                    accel[0] += accel_step
+
+                if event.key == pygame.K_UP:
+                    accel[1] -= accel_step
                 elif event.key == pygame.K_DOWN:
-                    pos_change[1] = 5
+                    accel[1] += accel_step
 
             if etype == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
-                    pos_change[0] = 0
+                    speed[0] = accel[0] = 0
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
-                    pos_change[1] = 0
+                    speed[1] = accel[1] = 0
 
-        x += pos_change[0]
-        y += pos_change[1]
+        speed[0] += accel[0]
+        speed[1] += accel[1]
+        x += speed[0]
+        y += speed[1]
 
         gameDisplay.fill(white)
         car(x, y)
