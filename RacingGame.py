@@ -17,13 +17,11 @@ clock = pygame.time.Clock()
 carImg = pygame.image.load('racecar.png')
 carImgSize = carImg.get_rect().size
 
-accel = [0, 0]
-
 def crash():
     message_display('You Crashed')
 
 def text_objects(text, font):
-    textSurface = font.render(text, True, black)
+    textSurface = font.render(text, True, red)
     return textSurface, textSurface.get_rect()
 
 def message_display(text):
@@ -38,13 +36,21 @@ def message_display(text):
 def car(x, y):
     gameDisplay.blit(carImg, (x, y))
 
+def things_dodged(count):
+    font = pygame.font.SysFont(None, 25)
+    text = font.render("Dodged: "+str(count), True, black)
+    gameDisplay.blit(text,(0,0))
+
 def things(thingx, thingy, thingw, thingh, color):
     pygame.draw.rect(gameDisplay, color, [thingx, thingy, thingw, thingh])
+
+accel_step = 0.5
 
 def game_loop():
     x = (display_width * 0.45)
     y = (display_height * 0.6)
 
+    accel = [0, 0]
     speed = [0, 0]
 
     thing_startx = random.randrange(0, display_width)
@@ -52,6 +58,8 @@ def game_loop():
     thing_speed = 7
     thing_width = 200
     thing_height = 100
+
+    dodged = 0
 
     gameExit = False
 
@@ -64,13 +72,13 @@ def game_loop():
 
             if etype == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    accel[0] -= 1
+                    accel[0] -= accel_step
                 elif event.key == pygame.K_RIGHT:
-                    accel[0] += 1
+                    accel[0] += accel_step
                 if event.key == pygame.K_UP:
-                    accel[1] -= 1
+                    accel[1] -= accel_step
                 elif event.key == pygame.K_DOWN:
-                    accel[1] += 1
+                    accel[1] += accel_step
 
             if etype == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
@@ -84,19 +92,32 @@ def game_loop():
         y += speed[1]
 
         gameDisplay.fill(white)
+        car(x,y)
+        things_dodged(dodged)
 
 
         things(thing_startx, thing_starty, thing_width, thing_height, black)
         thing_starty += thing_speed
-        car(x, y)
 
         if x > (display_width - carImgSize[0]) or x < 0:
             crash()
         if y > (display_height - carImgSize[1]) or y < 0:
             crash()
+
         if thing_starty > display_height:
             thing_starty = 0 - thing_height
             thing_startx = random.randrange(0,display_width)
+            dodged += 1
+
+        if y < thing_starty+thing_height:
+            print('y crossover')
+
+            if (x > thing_startx and
+                x < thing_startx + thing_width or
+                x + carImgSize[0] > thing_startx and
+                x + carImgSize[0] < thing_startx+thing_width):
+                print('x crossover')
+                crash()
 
         pygame.display.update()
         clock.tick(60)
