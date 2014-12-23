@@ -9,14 +9,15 @@ black = (0,0,0)
 white = (255,255,255)
 red = (255,0,0)
 
-gameDisplay = pygame.display.set_mode((display_width,display_height))
-pygame.display.set_caption('pew pew')
+gameDisplay = pygame.display.set_mode((display_width, display_height))
+pygame.display.set_caption('Racing Game')
 clock = pygame.time.Clock()
 
 carImg = pygame.image.load('racecar.png')
+carImgSize = carImg.get_rect().size
 
-def car(x,y):
-    gameDisplay.blit(carImg,(x,y))
+def car(x, y):
+    gameDisplay.blit(carImg, (x, y))
 
 def game_loop():
     x = (display_width * 0.45)
@@ -27,7 +28,6 @@ def game_loop():
     gameExit = False
 
     while not gameExit:
-
         for event in pygame.event.get():
             etype = event.type
 
@@ -54,15 +54,15 @@ def game_loop():
         y += pos_change[1]
 
         gameDisplay.fill(white)
-        car(x,y)
+        car(x, y)
 
-        if x > display_width or x < 0:
+        if x > (display_width - carImgSize[0]) or x < 0:
+            gameExit = True
+        if y > (display_height - carImgSize[1]) or y < 0:
             gameExit = True
 
         pygame.display.update()
         clock.tick(60)
-
-
 
 game_loop()
 pygame.quit()
