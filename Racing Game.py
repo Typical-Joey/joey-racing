@@ -10,7 +10,7 @@ white = (255,255,255)
 red = (255,0,0)
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
-pygame.display.set_caption('Just another racing game')
+pygame.display.set_caption('pew pew')
 clock = pygame.time.Clock()
 
 carImg = pygame.image.load('racecar.png')
@@ -22,34 +22,43 @@ def game_loop():
     x = (display_width * 0.45)
     y = (display_height * 0.6)
 
-    x_change = 0
+    pos_change = [0, 0]
 
     gameExit = False
 
     while not gameExit:
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            etype = event.type
+
+            if etype == pygame.QUIT:
                 gameExit = True
 
-            if event.type == pygame.KEYDOWN:
+            if etype == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    x_change = -5
+                    pos_change[0] = -5
                 elif event.key == pygame.K_RIGHT:
-                    x_change = 5
+                    pos_change[0] = 5
+                elif event.key == pygame.K_UP:
+                    pos_change[1] = -5
+                elif event.key == pygame.K_DOWN:
+                    pos_change[1] = 5
 
-                if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT: 
-                        x_change = 0
+            if etype == pygame.KEYUP:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                    pos_change[0] = 0
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    pos_change[1] = 0
 
-        x += x_change
-       
+        x += pos_change[0]
+        y += pos_change[1]
+
         gameDisplay.fill(white)
         car(x,y)
 
         if x > display_width or x < 0:
             gameExit = True
-             
+
         pygame.display.update()
         clock.tick(60)
 
